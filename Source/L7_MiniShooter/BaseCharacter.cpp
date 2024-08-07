@@ -1,14 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "BaseCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 
-// Sets default values
 ABaseCharacter::ABaseCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Default Values Setup
@@ -31,18 +27,17 @@ ABaseCharacter::ABaseCharacter()
 	NameTextRender->SetHorizontalAlignment(EHTA_Center);
 }
 
-// Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
-// Called every frame
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UpdateStamina(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -90,3 +85,75 @@ void ABaseCharacter::Jump()
 	ACharacter::Jump();
 }
 
+// Stat Functions
+
+void ABaseCharacter::UpdateStamina(float DeltaTime)
+{
+	if (bIsSprinting)
+	{
+		Stamina -= 20.f * StaminaConsumptionRate * DeltaTime;
+		if (Stamina <= 0.f)
+		{
+			Stamina = 0.f;
+			StopSprint();
+		}
+	}
+	else if (Stamina < MaxStamina)
+	{
+		Stamina += StaminaRechargeRate * DeltaTime;
+		if (Stamina > MaxStamina)
+		{
+			Stamina = MaxStamina;
+		}
+	}
+}
+
+void ABaseCharacter::TakeDamage(int Value)
+{
+	if (!bIsDead)
+	{
+		if (CurrentHealth - Value > 0)
+		{
+			CurrentHealth -= Value;
+		}
+		else
+		{
+			CurrentHealth = 0;
+			Death();
+		}
+	}
+}
+
+void ABaseCharacter::Heal(int Value)
+{
+	if (CurrentHealth + Value <= Health) {
+		CurrentHealth += Value;
+	}
+	else {
+		CurrentHealth = Health;
+	}
+}
+
+void ABaseCharacter::Death()
+{
+	bIsDead = true;
+}
+
+void ABaseCharacter::AssignName(FString Text)
+{
+	CharacterName = Text;
+	if (NameTextRender)
+	{
+		NameTextRender->SetText(FText::FromString(Text));
+	}
+}
+
+int ABaseCharacter::GetHealth()
+{
+	return CurrentHealth;
+}
+
+int ABaseCharacter::GetMaxHealth()
+{
+	return Health;
+}

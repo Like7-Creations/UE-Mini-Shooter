@@ -63,6 +63,16 @@ protected:
 	void StopSprint();
 	void Jump();
 
+	//
+	// Stat Functions
+	void TakeDamage(int Value);
+	void Heal(int Value);
+	void Death();
+	int GetHealth();
+	int GetMaxHealth();
+	void AssignName(FString Text);
+
 private:
 	bool bIsSprinting;
+	void UpdateStamina(float DeltaTime);
 };
