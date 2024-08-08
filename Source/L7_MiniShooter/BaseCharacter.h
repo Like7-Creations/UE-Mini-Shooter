@@ -70,6 +70,8 @@ protected:
 	void Death();
 	int GetHealth();
 	int GetMaxHealth();
+	
+public:
 	void AssignName(FString Text);
 
 private:

@@ -6,6 +6,8 @@
 #include "BaseCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "EnhancedInputLibrary.h"
+#include "EnhancedInputComponent.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -39,4 +41,39 @@ private:
 
 	float baseFOV;
 	
+	void Movement(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	void StartAim();
+	void StopAim();
+
+	// Mapping reference
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputMappingContext* DefaultMappingContext;
+
+	// Actions Reference
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* LookAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SprintAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* AimAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* FireAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* ReloadAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SwitchAction;
 };
