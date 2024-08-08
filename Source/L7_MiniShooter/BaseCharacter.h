@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Components/TextRenderComponent.h"
 #include "BaseWeapon.h"
+#include "Animation/AnimInstance.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
@@ -89,11 +90,12 @@ protected:
 	int GetHealth();
 	int GetMaxHealth();
 	
+	bool bIsSprinting;
+	void UpdateStamina(float DeltaTime);
+
 public:
 	void AssignName(FString Text);
 	void TakeDamage(int Value);
 
-private:
-	bool bIsSprinting;
-	void UpdateStamina(float DeltaTime);
+
 };
