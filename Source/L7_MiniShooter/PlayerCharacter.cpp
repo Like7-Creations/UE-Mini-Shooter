@@ -15,7 +15,7 @@ APlayerCharacter::APlayerCharacter()
 	CameraArm->SetupAttachment(RootComponent);
 	CameraArm->TargetArmLength = 300.0f; // The camera follow distance
 	CameraArm->bUsePawnControlRotation = true; // Rotate arm based on the controller
-	CameraArm->SocketOffset = FVector(0.0f, 75.0f, 50.0f); // Offset to the right and above the character
+	CameraArm->SocketOffset = FVector(0.0f, 50.0f, 50.0f); // Offset to the right and above the character
 	CameraArm->bEnableCameraLag = true;
 	CameraArm->CameraLagSpeed = 5.0f;
 	PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));

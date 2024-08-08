@@ -261,3 +261,4 @@ int ABaseCharacter::GetTotalAmmo()
 {
 	return Weapons[CurrentWeaponIndex]->GetTotalAmmo();
 }
+
