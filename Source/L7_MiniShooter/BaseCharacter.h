@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/TextRenderComponent.h"
+#include "BaseWeapon.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
@@ -54,8 +55,18 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Character/Stats")
 	float SprintMultiplier;
-	
+
 protected:
+	// Weapon Information
+	UPROPERTY(EditAnywhere, Category = "Character/Weapons")
+	TArray<TSubclassOf<ABaseWeapon>> WeaponClasses;
+
+	UPROPERTY(EditAnywhere, Category = "Character/Weapons")
+	TArray<ABaseWeapon*> Weapons;
+
+	UPROPERTY(VisibleAnywhere, Category = "Character/Weapons")
+	int CurrentWeaponIndex;
+	
 	// Movement Functions
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -63,9 +74,16 @@ protected:
 	void StopSprint();
 	void Jump();
 
-	//
+	// Weapon Functions
+	void FireWeapon();
+	void StartFireWeapon();
+	void StopFireWeapon();
+	void ReloadWeapon();
+	void EquipWeapon(int Index);
+	int GetMagazineAmmo();
+	int GetTotalAmmo();
+
 	// Stat Functions
-	void TakeDamage(int Value);
 	void Heal(int Value);
 	void Death();
 	int GetHealth();
@@ -73,6 +91,7 @@ protected:
 	
 public:
 	void AssignName(FString Text);
+	void TakeDamage(int Value);
 
 private:
 	bool bIsSprinting;

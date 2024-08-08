@@ -61,6 +61,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Input->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopSprint);
 	Input->BindAction(AimAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartAim);
 	Input->BindAction(AimAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopAim);
+
+	// Weapon Controls
+	Input->BindAction(FireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::StartFireWeapon);
+	Input->BindAction(FireAction, ETriggerEvent::Completed, this, &APlayerCharacter::StopFireWeapon);
+	Input->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &APlayerCharacter::ReloadWeapon);
+	Input->BindAction(SwitchAction, ETriggerEvent::Triggered, this, &APlayerCharacter::SwitchWeapon);
 }
 
 void APlayerCharacter::Movement(const FInputActionValue& Value)
@@ -96,4 +102,15 @@ void APlayerCharacter::StartAim()
 void APlayerCharacter::StopAim()
 {
 	PlayerCamera->SetFieldOfView(baseFOV);
+}
+
+void APlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
+{
+	float fIndex = Value.Get<float>();
+	int WeaponIndex = (int)fIndex;
+
+	if (Weapons.IsValidIndex(WeaponIndex - 1))
+	{
+		EquipWeapon(WeaponIndex - 1);
+	}
 }

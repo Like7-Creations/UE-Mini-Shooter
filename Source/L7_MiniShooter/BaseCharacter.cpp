@@ -1,6 +1,8 @@
 
 #include "BaseCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ABaseCharacter::ABaseCharacter()
@@ -31,6 +33,27 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CurrentHealth = Health;
+	if (GetCapsuleComponent())
+	{
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECollisionResponse::ECR_Block);
+	}
+
+	// Add Weapons to Character
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+
+	for (int i = 0; i < WeaponClasses.Num(); i++)
+	{
+		ABaseWeapon* TempWeapon = GetWorld()->SpawnActor<ABaseWeapon>(WeaponClasses[i]);
+		TempWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("WeaponSocket"));
+		TempWeapon->SetActorEnableCollision(false);
+		TempWeapon->SetCharacter(this);
+		Weapons.Add(TempWeapon);
+		EquipWeapon(i);
+	}
+	EquipWeapon(0);
 }
 
 void ABaseCharacter::Tick(float DeltaTime)
@@ -38,6 +61,22 @@ void ABaseCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdateStamina(DeltaTime);
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PlayerController)
+	{
+		FVector CameraLocation;
+		FRotator CameraRotation;
+		PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+		FVector Direction = CameraLocation - NameTextRender->GetComponentLocation();
+		Direction.Normalize();
+
+		FRotator NewRotation = Direction.Rotation();
+		NewRotation.Pitch = 0.0f; 
+
+		NameTextRender->SetWorldRotation(NewRotation);
+	}
 }
 
 // Called to bind functionality to input
@@ -156,4 +195,69 @@ int ABaseCharacter::GetHealth()
 int ABaseCharacter::GetMaxHealth()
 {
 	return Health;
+}
+
+// Weapon Functions
+
+void ABaseCharacter::EquipWeapon(int Index)
+{
+	if (Weapons.IsValidIndex(Index))
+	{
+		for (ABaseWeapon* Weapon : Weapons)
+		{
+			if (Weapon)
+			{
+				Weapon->SetActorHiddenInGame(true);
+			}
+		}
+
+		ABaseWeapon* SelectedWeapon = Weapons[Index];
+		if (SelectedWeapon)
+		{
+			SelectedWeapon->SetActorHiddenInGame(false);
+		}
+		CurrentWeaponIndex = Index;
+	}
+}
+
+void ABaseCharacter::FireWeapon()
+{
+	if (Weapons[CurrentWeaponIndex])
+	{
+		Weapons[CurrentWeaponIndex]->Fire();
+	}
+}
+
+void ABaseCharacter::StartFireWeapon()
+{
+	if (Weapons[CurrentWeaponIndex])
+	{
+		Weapons[CurrentWeaponIndex]->StartFire();
+	}
+}
+
+void ABaseCharacter::StopFireWeapon()
+{
+	if (Weapons[CurrentWeaponIndex])
+	{
+		Weapons[CurrentWeaponIndex]->StopFire();
+	}
+}
+
+void ABaseCharacter::ReloadWeapon()
+{
+	if (Weapons[CurrentWeaponIndex])
+	{
+		Weapons[CurrentWeaponIndex]->Reload();
+	}
+}
+
+int ABaseCharacter::GetMagazineAmmo()
+{
+	return Weapons[CurrentWeaponIndex]->GetAmmo();
+}
+
+int ABaseCharacter::GetTotalAmmo()
+{
+	return Weapons[CurrentWeaponIndex]->GetTotalAmmo();
 }

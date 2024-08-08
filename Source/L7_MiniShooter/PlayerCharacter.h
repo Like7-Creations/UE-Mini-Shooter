@@ -43,6 +43,7 @@ private:
 	
 	void Movement(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void SwitchWeapon(const FInputActionValue& Value);
 	void StartAim();
 	void StopAim();
 

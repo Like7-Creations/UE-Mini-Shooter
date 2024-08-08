@@ -9,6 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "Logging/StructuredLog.h"
 #include "GameFramework/PlayerController.h"
+#include "BaseCharacter.h"
 
 ABaseWeapon::ABaseWeapon()
 {
@@ -137,10 +138,10 @@ void ABaseWeapon::HandleShot()
 		AActor* HitActor = HitResult.GetActor();
 		if (HitActor)
 		{
-			//if ()
-			//{
-			//	// Apply damage to the hit character
-			//}
+			if (Cast<ABaseCharacter>(HitActor))
+			{
+				Cast<ABaseCharacter>(HitActor)->TakeDamage(DamagePerShot);
+			}
 		}
 	}
 }
