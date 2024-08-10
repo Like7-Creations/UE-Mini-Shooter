@@ -10,6 +10,12 @@
 #include "Misc/Paths.h"
 #include "HAL/PlatformFilemanager.h"
 #include "Math/UnrealMathUtility.h"
+#include "GameFramework/PlayerController.h"
+
+ATestGameMode* ATestGameMode::Get()
+{
+    return Cast<ATestGameMode>(UGameplayStatics::GetGameMode(GWorld));
+}
 
 ATestGameMode::ATestGameMode()
 {
@@ -21,9 +27,38 @@ void ATestGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
-    TArray<AActor*> SpawnPoints;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), SpawnPoints);
+    CountdownDuration = 5.0f;
+    CountdownTime = CountdownDuration;
 
+    GetSpawnPoints();
+
+    SpawnCharacters();
+
+    GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ATestGameMode::HandleCountdown);
+}
+
+void ATestGameMode::GetSpawnPoints()
+{
+    // Get all actors of type "PlayerStart" in the level (or any other custom spawn point class)
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), SpawnPoints);
+}
+
+void ATestGameMode::SpawnCharacters()
+{
+    if (SpawnPoints.Num() < 5)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Not enough spawn points for all characters!"));
+        return;
+    }
+
+    // Shuffle the spawn points to randomize spawn locations
+    for (int32 i = 0; i < SpawnPoints.Num(); i++)
+    {
+        int32 RandomIndex = FMath::RandRange(0, SpawnPoints.Num() - 1);
+        SpawnPoints.Swap(i, RandomIndex);
+    }
+
+    // Spawn the player
     ABaseCharacter* PlayerCharacter = GetWorld()->SpawnActor<ABaseCharacter>(PlayerCharacterClass, SpawnPoints[0]->GetActorLocation(), SpawnPoints[0]->GetActorRotation());
     if (PlayerCharacter)
     {
@@ -34,6 +69,14 @@ void ATestGameMode::BeginPlay()
         }
     }
 
+    // Spawn AI characters
+    for (int32 i = 1; i <= 4; i++)
+    {
+        GetWorld()->SpawnActor<ABaseCharacter>(AICharacterClass, SpawnPoints[i]->GetActorLocation(), SpawnPoints[i]->GetActorRotation());
+    }
+
+    // Assign random names to all characters
+    AssignRandomNames();
 }
 
 void ATestGameMode::AssignRandomNames()
@@ -70,4 +113,24 @@ void ATestGameMode::AssignRandomNames()
     }
 }
 
+void ATestGameMode::HandleCountdown()
+{
+    // Disable player input and AI movement
+    if (CountdownTime > 0)
+    {
+        CountdownTime -= 1.0f;
+        GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ATestGameMode::HandleCountdown);
+    }
+    else
+    {
+        // Re-enable player input and AI movement
+        StartGame();
+    }
+}
+
+void ATestGameMode::StartGame()
+{
+    // Allow players and AI to move after countdown
+    // You might need to call a function on the characters to re-enable movement/input
+}
 
