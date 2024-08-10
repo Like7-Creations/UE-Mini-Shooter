@@ -176,6 +176,12 @@ void ABaseCharacter::Heal(int Value)
 void ABaseCharacter::Death()
 {
 	bIsDead = true;
+	GetCharacterMovement()->DisableMovement();
+	if (GetMesh())
+	{
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetMesh()->SetSimulatePhysics(true);
+	}
 }
 
 void ABaseCharacter::AssignName(FString Text)

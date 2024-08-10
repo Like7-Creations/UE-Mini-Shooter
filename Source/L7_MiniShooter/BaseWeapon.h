@@ -42,6 +42,7 @@ protected:
     UPROPERTY(EditAnywhere, Category = "Weapon Stats")
     bool bIsAutomatic;
 
+    UPROPERTY(VisibleAnywhere, Category = "Weapon Stats")
     float ShotInterval;
 
     UPROPERTY(VisibleAnywhere, Category = "Weapon Stats")

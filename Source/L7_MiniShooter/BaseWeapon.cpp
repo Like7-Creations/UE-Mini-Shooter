@@ -17,20 +17,20 @@ ABaseWeapon::ABaseWeapon()
 
 	DamagePerShot = 25.f;
 	MagazineCapacity = 30;
-	BulletsInMagazine = MagazineCapacity;
 	MagazinesCarried = 3;
 	RateOfFire = 50.f;
 	ReloadTime = 2.f;
 	bIsAutomatic = true;
 
-	ShotInterval = 60.f / RateOfFire;
+	
 	bCanFire = true;
 }
 
 void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	BulletsInMagazine = MagazineCapacity;
+	ShotInterval = 60.f / RateOfFire;
 }
 
 void ABaseWeapon::Tick(float DeltaTime)
