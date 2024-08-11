@@ -140,13 +140,13 @@ void ABaseWeapon::HandleShot()
 		{
 			if (Cast<ABaseCharacter>(HitActor))
 			{
-				Cast<ABaseCharacter>(HitActor)->TakeDamage(DamagePerShot);
+				Cast<ABaseCharacter>(HitActor)->TakeDamage(DamagePerShot, ShootingCharacter);
 			}
 		}
 	}
 }
 
-void ABaseWeapon::SetCharacter(AActor* Shooter)
+void ABaseWeapon::SetCharacter(ACharacter* Shooter)
 {
 	ShootingCharacter = Shooter;
 }

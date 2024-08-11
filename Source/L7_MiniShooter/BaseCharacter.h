@@ -28,6 +28,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Character")
 	FString CharacterName;
 
+	UPROPERTY(VisibleAnywhere, Category = "Character")
+	int Points;
+
 	UPROPERTY(EditAnywhere, Category = "Character")
 	UTextRenderComponent* NameTextRender;
 
@@ -86,7 +89,8 @@ protected:
 
 	// Stat Functions
 	void Heal(int Value);
-	void Death();
+	void Death(ACharacter* Assailant);
+	void GainPoint();
 	int GetHealth();
 	int GetMaxHealth();
 	
@@ -95,7 +99,7 @@ protected:
 
 public:
 	void AssignName(FString Text);
-	void TakeDamage(int Value);
-
+	void TakeDamage(int Value, ACharacter* Assailant);
+	void SetCharacterInputEnabled(bool bEnabled);
 
 };

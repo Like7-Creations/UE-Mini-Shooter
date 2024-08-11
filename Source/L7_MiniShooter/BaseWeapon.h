@@ -52,7 +52,7 @@ protected:
     FTimerHandle TimerHandle_TimeBetweenShots;
     FTimerHandle TimerHandle_Reload;
 
-    AActor* ShootingCharacter;
+    ACharacter* ShootingCharacter;
 
     void HandleShot();
 
@@ -79,6 +79,6 @@ public:
 
     int GetAmmo();
     int GetTotalAmmo();
-    void SetCharacter(AActor* Shooter);
+    void SetCharacter(ACharacter* Shooter);
 	
 };

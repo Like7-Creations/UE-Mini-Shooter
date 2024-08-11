@@ -35,12 +35,16 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
     float CountdownDuration;
 
-    float CountdownTime;
+    int CountdownTime;
+    FTimerHandle TimerHandel_Countdown;
+    void UpdateCountDown();
     void StartGame();
     void SpawnCharacters();
     void AssignRandomNames();
+    void SetInputStateOfAllCharacters(bool bState);
 
 public:
     void GetSpawnPoints();
     void HandleCountdown();
+
 };

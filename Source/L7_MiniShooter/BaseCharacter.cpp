@@ -33,6 +33,8 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Points = 0;
+
 	CurrentHealth = Health;
 	if (GetCapsuleComponent())
 	{
@@ -84,6 +86,18 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ABaseCharacter::SetCharacterInputEnabled(bool bEnabled)
+{
+	if (bEnabled)
+	{
+		EnableInput(GetWorld()->GetFirstPlayerController());
+	}
+	else
+	{
+		DisableInput(GetWorld()->GetFirstPlayerController());
+	}
 }
 
 // Movement Functions
@@ -147,7 +161,7 @@ void ABaseCharacter::UpdateStamina(float DeltaTime)
 	}
 }
 
-void ABaseCharacter::TakeDamage(int Value)
+void ABaseCharacter::TakeDamage(int Value, ACharacter* Assailant)
 {
 	if (!bIsDead)
 	{
@@ -158,7 +172,7 @@ void ABaseCharacter::TakeDamage(int Value)
 		else
 		{
 			CurrentHealth = 0;
-			Death();
+			Death(Assailant);
 		}
 	}
 }
@@ -173,15 +187,25 @@ void ABaseCharacter::Heal(int Value)
 	}
 }
 
-void ABaseCharacter::Death()
+void ABaseCharacter::Death(ACharacter* Assailant)
 {
 	bIsDead = true;
+	ABaseCharacter* Killer = Cast<ABaseCharacter>(Assailant);
+	if (Killer)
+	{
+		Killer->GainPoint();
+	}
 	GetCharacterMovement()->DisableMovement();
 	if (GetMesh())
 	{
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		GetMesh()->SetSimulatePhysics(true);
 	}
+}
+
+void ABaseCharacter::GainPoint() 
+{
+	Points++;
 }
 
 void ABaseCharacter::AssignName(FString Text)

@@ -11,6 +11,7 @@
 #include "HAL/PlatformFilemanager.h"
 #include "Math/UnrealMathUtility.h"
 #include "GameFramework/PlayerController.h"
+#include "GameModeHUD.h"
 
 ATestGameMode* ATestGameMode::Get()
 {
@@ -21,20 +22,42 @@ ATestGameMode::ATestGameMode()
 {
     static ConstructorHelpers::FClassFinder<APawn> PlayerCharacter(TEXT("/Game/BluePrints/Characters/BP_BaseCharacter"));
     DefaultPawnClass = PlayerCharacter.Class;
+    HUDClass = AGameModeHUD::StaticClass();
 }
 
 void ATestGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
+    GetSpawnPoints();
+    SpawnCharacters();
+    SetInputStateOfAllCharacters(false);
+
     CountdownDuration = 5.0f;
     CountdownTime = CountdownDuration;
+    GetWorld()->GetTimerManager().SetTimer(TimerHandel_Countdown, this, &ATestGameMode::UpdateCountDown, 1.0f, false);
+}
 
-    GetSpawnPoints();
+void ATestGameMode::UpdateCountDown()
+{
+    if (CountdownTime > 0)
+    {
+        CountdownTime--;
 
-    SpawnCharacters();
+        // Get the HUD and update the countdown
+        AGameModeHUD* GameHUD = Cast<AGameModeHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+        if (GameHUD)
+        {
+            GameHUD->SetCountdown(CountdownTime);
+        }
 
-    GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ATestGameMode::HandleCountdown);
+        GetWorld()->GetTimerManager().SetTimer(TimerHandel_Countdown, this, &ATestGameMode::UpdateCountDown, 1.0f, false);
+    }
+    else
+    {
+        GetWorld()->GetTimerManager().ClearTimer(TimerHandel_Countdown);
+        StartGame();
+    }
 }
 
 void ATestGameMode::GetSpawnPoints()
@@ -128,9 +151,24 @@ void ATestGameMode::HandleCountdown()
     }
 }
 
+void ATestGameMode::SetInputStateOfAllCharacters(bool bState)
+{
+    TArray<AActor*> Characters;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseCharacter::StaticClass(), Characters);
+
+    // Loop through all characters in the world and disable input
+    for (int i = 0; i < Characters.Num(); i++)
+    {
+        ABaseCharacter* Character = Cast<ABaseCharacter>(Characters[i]);
+        if (Character)
+        {
+            Character->SetCharacterInputEnabled(bState);
+        }
+    }
+}
+
 void ATestGameMode::StartGame()
 {
-    // Allow players and AI to move after countdown
-    // You might need to call a function on the characters to re-enable movement/input
+    SetInputStateOfAllCharacters(true);
 }
 
