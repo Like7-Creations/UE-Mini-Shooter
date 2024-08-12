@@ -93,6 +93,8 @@ protected:
 	void GainPoint();
 	int GetHealth();
 	int GetMaxHealth();
+	float GetStamina();
+	float GetMaxStamina();
 	
 	bool bIsSprinting;
 	void UpdateStamina(float DeltaTime);

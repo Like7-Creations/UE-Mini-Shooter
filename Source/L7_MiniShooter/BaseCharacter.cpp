@@ -227,6 +227,16 @@ int ABaseCharacter::GetMaxHealth()
 	return Health;
 }
 
+float ABaseCharacter::GetStamina()
+{
+	return Stamina;
+}
+
+float ABaseCharacter::GetMaxStamina()
+{
+	return MaxStamina;
+}
+
 // Weapon Functions
 
 void ABaseCharacter::EquipWeapon(int Index)

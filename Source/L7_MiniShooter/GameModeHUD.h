@@ -16,15 +16,28 @@ class L7_MINISHOOTER_API AGameModeHUD : public AHUD
 	
 public:
 	void BeginPlay() override;
-
 	void DrawHUD() override;
 
-	void SetCountdown(int32 NewCountdown);
+	void SetCountdown(int NewCountdown);
+	void SetCurrentAmmo(int Ammo);
+	void SetTotalAmmo(int Ammo);
+	void SetMaxStamina(float Max);
+	void SetCurrentStamina(float Stamina);
 
 private:
-	int32 Countdown;
+	int Countdown;
+	int CurrentAmmo;
+	int TotalAmmo;
+	float MaxStamina;
+	float CurrentStamina;
 	
-	UPROPERTY(EditAnywhere, Category = "Texts")
+	UPROPERTY(EditAnywhere, Category = "UI")
 	UFont* CountDownFont;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	UFont* AmmoFont;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	UTexture2D* CrossHair;
 	
 };

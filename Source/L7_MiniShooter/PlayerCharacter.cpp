@@ -5,6 +5,8 @@
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameModeHUD.h"
+#include "Kismet/GameplayStatics.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -31,12 +33,13 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UpdateHUD();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	UpdateHUD();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -112,5 +115,17 @@ void APlayerCharacter::SwitchWeapon(const FInputActionValue& Value)
 	if (Weapons.IsValidIndex(WeaponIndex - 1))
 	{
 		EquipWeapon(WeaponIndex - 1);
+	}
+}
+
+void APlayerCharacter::UpdateHUD()
+{
+	AGameModeHUD* GameHUD = Cast<AGameModeHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD());
+	if (GameHUD)
+	{
+		GameHUD->SetCurrentAmmo(GetMagazineAmmo());
+		GameHUD->SetTotalAmmo(GetTotalAmmo());
+		GameHUD->SetMaxStamina(GetMaxStamina());
+		GameHUD->SetCurrentStamina(GetStamina());
 	}
 }
